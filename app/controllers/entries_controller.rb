@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class EntriesController < ApplicationController
   before_action :set_entries
-  before_action :set_entry, only: [:show, :edit, :update, :destroy]
+  before_action :set_entry, only: %i[show edit update destroy]
 
   # GET pools/1/entries
   def index
@@ -8,8 +10,7 @@ class EntriesController < ApplicationController
   end
 
   # GET pools/1/entries/1
-  def show
-  end
+  def show; end
 
   # GET pools/1/entries/new
   def new
@@ -17,8 +18,7 @@ class EntriesController < ApplicationController
   end
 
   # GET pools/1/entries/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST pools/1/entries
   def create
@@ -48,17 +48,18 @@ class EntriesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_entries
-      @pool = Pool.find(params[:pool_id])
-    end
 
-    def set_entry
-      @entry = @pool.entries.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_entries
+    @pool = Pool.find(params[:pool_id])
+  end
 
-    # Only allow a trusted parameter "white list" through.
-    def entry_params
-      params.require(:entry).permit(:pool_id, :user_id, :name, :teams, :status)
-    end
+  def set_entry
+    @entry = @pool.entries.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def entry_params
+    params.require(:entry).permit(:pool_id, :user_id, :name, :teams, :status)
+  end
 end
