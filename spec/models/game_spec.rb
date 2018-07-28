@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: games
@@ -12,6 +11,7 @@
 #  pool_id    :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  loser      :integer
 #
 
 require 'rails_helper'
@@ -82,6 +82,7 @@ describe Game do
       its(:home_teams) { is_expected.to eq teams }
       its(:away_teams) { is_expected.to eq teams }
       its(:winners) { is_expected.to eq teams.merge('no_winner' => 32) }
+      its(:losers) { is_expected.to eq teams }
     end
 
     context 'when home and away teams are the same' do
