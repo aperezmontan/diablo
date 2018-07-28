@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: games
@@ -84,7 +86,7 @@ describe Game do
 
     context 'when home and away teams are the same' do
       it 'fails validations' do
-        expect{ create(:game, home_team: 0, away_team: 0) }
+        expect { create(:game, home_team: 0, away_team: 0) }
           .to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Away team can't be the same as Home team")
       end
     end
