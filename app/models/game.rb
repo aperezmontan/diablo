@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: games
@@ -12,6 +11,7 @@
 #  pool_id    :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  loser      :integer
 #
 
 class Game < ApplicationRecord
@@ -26,7 +26,8 @@ class Game < ApplicationRecord
   validates_numericality_of :home_team
   validates_numericality_of :away_team
   validates_numericality_of :status
-  validates_numericality_of :winner
+  validates_numericality_of :winner, allow_blank: true
+  validates_numericality_of :loser, allow_blank: true
 
   validate :home_and_away_teams
 
@@ -34,6 +35,7 @@ class Game < ApplicationRecord
   enum away_team: TEAMS.keys, _prefix: true
   enum status: %i[pending finished]
   enum winner: TEAMS.keys.push(:no_winner), _prefix: true
+  enum loser: TEAMS.keys, _prefix: true
 
   private
 
