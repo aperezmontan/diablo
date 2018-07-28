@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Week:</strong>
+  <%= @pool.week %>
+</p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @pool.year %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @pool.description %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @pool.status %>
+</p>
+
+<%= link_to 'Edit', edit_pool_path(@pool) %> |
+<%= link_to 'Back', pools_path %>
