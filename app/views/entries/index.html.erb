@@ -1,0 +1,31 @@
+<h1>Listing entries</h1>
+
+<table>
+  <tr>
+    <th>Pool</th>
+    <th>User</th>
+    <th>Name</th>
+    <th>Teams</th>
+    <th>Status</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @entries.each do |entry| %>
+  <tr>
+    <td><%= entry.pool %></td>
+    <td><%= entry.user %></td>
+    <td><%= entry.name %></td>
+    <td><%= entry.teams %></td>
+    <td><%= entry.status %></td>
+    <td><%= link_to 'Show', [entry.pool, entry] %></td>
+    <td><%= link_to 'Edit', edit_pool_entry_path(entry.pool, entry) %></td>
+    <td><%= link_to 'Destroy', [entry.pool, entry], :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Entry', new_pool_entry_path(params[:pool_id]) %>

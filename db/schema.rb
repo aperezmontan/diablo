@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 2018_07_28_180905) do
     t.bigint "pool_id"
     t.bigint "user_id"
     t.string "name"
-    t.integer "teams", default: [], array: true
+    t.integer "teams", default: [], null: false, array: true
     t.integer "status"
     t.jsonb "data"
     t.datetime "created_at", null: false
