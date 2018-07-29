@@ -7,7 +7,7 @@ describe 'Users', type: :request do
 
   describe 'GET /users/new' do
     it "displays the new User's page" do
-      get new_user_path
+      get new_users_admin_path
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq('text/html')
       expect(response.body).to include('New User')
@@ -16,7 +16,7 @@ describe 'Users', type: :request do
 
   describe 'GET /users/1/edit' do
     it "displays the new User's page" do
-      get edit_user_path(user)
+      get edit_users_admin_path(user)
       expect(response).to have_http_status(200)
       expect(response.content_type).to eq('text/html')
       expect(response.body).to include('Editing User')
@@ -26,7 +26,7 @@ describe 'Users', type: :request do
   describe 'GET /users' do
     context 'when requesting an HTML response' do
       it 'succeeds' do
-        get users_path
+        get users_admin_index_path
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq('text/html')
         expect(response.body).to include('Users')
@@ -37,7 +37,7 @@ describe 'Users', type: :request do
       let(:headers) { { 'ACCEPT' => 'application/json' } } # This is what Rails accepts
 
       it 'succeeds' do
-        get users_path, headers: headers
+        get users_admin_index_path, headers: headers
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq('application/json')
       end
@@ -47,7 +47,7 @@ describe 'Users', type: :request do
   describe 'GET /users/1' do
     context 'when requesting an HTML response' do
       it 'succeeds' do
-        get user_path(user)
+        get users_admin_path(user)
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq('text/html')
         expect(response.body).to include('Bruh')
@@ -58,7 +58,7 @@ describe 'Users', type: :request do
       let(:headers) { { 'ACCEPT' => 'application/json' } } # This is what Rails accepts
 
       it 'succeeds' do
-        get user_path(user), headers: headers
+        get users_admin_path(user), headers: headers
         expect(response).to have_http_status(200)
         expect(response.content_type).to eq('application/json')
         expect(response.body).to include('Bruh')
@@ -70,11 +70,11 @@ describe 'Users', type: :request do
     context 'when requesting an HTML response' do
       context 'with correct parameters' do
         it "creates the new User and redirects to that User's page" do
-          expect { post users_path, params: { user: { name: 'Bruh' } } }
+          expect { post users_admin_index_path, params: { user: { username: 'Bruh', email: 'yuurr@bruh.com' } } }
             .to change { User.count }.by(1)
 
           user_id = User.first.id
-          expect(response).to redirect_to(user_path(user_id))
+          expect(response).to redirect_to(users_admin_path(user_id))
           expect(response.content_type).to eq('text/html')
           follow_redirect!
 
@@ -86,7 +86,7 @@ describe 'Users', type: :request do
 
       context 'with incorrect parameters' do
         it 'fails' do
-          expect { post users_path, params: { user: { foo: 'Bruh' } } }
+          expect { post users_admin_index_path, params: { user: { foo: 'Bruh' } } }
             .to change { User.count }.by(0)
 
           expect(response).to have_http_status(200)
@@ -97,8 +97,8 @@ describe 'Users', type: :request do
 
       context 'with bad parameters' do
         it 'fails' do
-          create(:user, name: 'Bruh')
-          expect { post users_path, params: { user: { name: 'Bruh' } } }
+          create(:user, username: 'Bruh')
+          expect { post users_admin_index_path, params: { user: { username: 'Bruh' } } }
             .to change { User.count }.by(0)
 
           expect(response).to have_http_status(200)
@@ -113,7 +113,11 @@ describe 'Users', type: :request do
 
       context 'with correct parameters' do
         it 'succeeds' do
-          expect { post users_path, headers: headers, params: { user: { name: 'Bruh' } } }
+          expect do
+            post users_admin_index_path,
+                 headers: headers,
+                 params: { user: { username: 'Bruh', email: 'yuurr@bruh.com' } }
+          end
             .to change { User.count }.by(1)
 
           expect(response).to have_http_status(201)
@@ -124,7 +128,7 @@ describe 'Users', type: :request do
 
       context 'with incorrect parameters' do
         it 'fails' do
-          expect { post users_path, headers: headers, params: { user: { foo: 'Bruh' } } }
+          expect { post users_admin_index_path, headers: headers, params: { user: { foo: 'Bruh' } } }
             .to change { User.count }.by(0)
 
           expect(response).to have_http_status(422)
@@ -134,8 +138,8 @@ describe 'Users', type: :request do
 
       context 'with bad parameters' do
         it 'fails' do
-          create(:user, name: 'Bruh')
-          expect { post users_path, headers: headers, params: { user: { name: 'Bruh' } } }
+          create(:user, username: 'Bruh')
+          expect { post users_admin_index_path, headers: headers, params: { user: { username: 'Bruh' } } }
             .to change { User.count }.by(0)
 
           expect(response).to have_http_status(422)
@@ -149,13 +153,14 @@ describe 'Users', type: :request do
     context 'when requesting an HTML response' do
       context 'with correct parameters' do
         it "updates the User and redirects to the User's page" do
-          expect(user.name).to eq('Bruh')
-          put user_path(user), params: { user: { name: 'Foo' } }
-          user.reload
-          expect(user.name).to eq('Foo')
+          username = user.username
 
-          user_id = User.first.id
-          expect(response).to redirect_to(user_path(user_id))
+          put users_admin_path(user), params: { user: { username: 'Foo' } }
+          user.reload
+          expect(user.username).to eq('Foo')
+          expect(user.username).to_not eq(username)
+
+          expect(response).to redirect_to(users_admin_path(user.id))
           expect(response.content_type).to eq('text/html')
           follow_redirect!
 
@@ -167,25 +172,29 @@ describe 'Users', type: :request do
 
       context 'with incorrect parameters' do
         it 'fails' do
-          expect(user.name).to eq('Bruh')
-          put user_path(user), params: { user: { foo: 'Foo' } }
+          username = user.username
+
+          put users_admin_path(user), params: { user: { foo: 'Foo' } }
           user.reload
-          expect(user.name).to eq('Bruh')
+          expect(user.username).to_not eq('Foo')
+          expect(user.username).to eq(username)
         end
       end
 
       context 'with bad parameters' do
         it 'fails' do
-          create(:user, name: 'Foo')
-          expect(user.name).to eq('Bruh')
-          put user_path(user), params: { user: { name: 'Foo' } }
+          username = user.username
+
+          create(:user, username: 'Foo')
+          put users_admin_path(user), params: { user: { username: 'Foo' } }
 
           user.reload
-          expect(user.name).to eq('Bruh')
+          expect(user.username).to_not eq('Foo')
+          expect(user.username).to eq(username)
 
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq('text/html')
-          expect(response.body).to include('Name has already been taken')
+          expect(response.body).to include('Username has already been taken')
         end
       end
     end
@@ -195,11 +204,13 @@ describe 'Users', type: :request do
 
       context 'with correct parameters' do
         it 'succeeds' do
-          expect(user.name).to eq('Bruh')
-          put user_path(user), headers: headers, params: { user: { name: 'Foo' } }
+          username = user.username
+
+          put users_admin_path(user), headers: headers, params: { user: { username: 'Foo' } }
 
           user.reload
-          expect(user.name).to eq('Foo')
+          expect(user.username).to eq('Foo')
+          expect(user.username).to_not eq(username)
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq('application/json')
           expect(JSON.parse(response.body)).to include(JSON.parse(User.first.to_json))
@@ -208,21 +219,25 @@ describe 'Users', type: :request do
 
       context 'with incorrect parameters' do
         it 'fails' do
-          expect(user.name).to eq('Bruh')
-          put user_path(user), headers: headers, params: { user: { foo: 'Foo' } }
+          username = user.username
+
+          put users_admin_path(user), headers: headers, params: { user: { foo: 'Foo' } }
           user.reload
-          expect(user.name).to eq('Bruh')
+          expect(user.username).to_not eq('Foo')
+          expect(user.username).to eq(username)
         end
       end
 
       context 'with bad parameters' do
         it 'fails' do
-          create(:user, name: 'Foo')
-          expect(user.name).to eq('Bruh')
-          put user_path(user), headers: headers, params: { user: { name: 'Foo' } }
+          username = user.username
+
+          create(:user, username: 'Foo')
+          put users_admin_path(user), headers: headers, params: { user: { username: 'Foo' } }
 
           user.reload
-          expect(user.name).to eq('Bruh')
+          expect(user.username).to_not eq('Foo')
+          expect(user.username).to eq(username)
 
           expect(response).to have_http_status(422)
           expect(response.content_type).to eq('application/json')
@@ -235,9 +250,9 @@ describe 'Users', type: :request do
     context 'when requesting an HTML response' do
       context 'with correct parameters' do
         it 'deletes the User and redirects to the Users page' do
-          delete user_path(user)
+          delete users_admin_path(user)
 
-          expect(response).to redirect_to(users_path)
+          expect(response).to redirect_to(users_admin_index_path)
           expect(response.content_type).to eq('text/html')
           follow_redirect!
 
@@ -253,7 +268,7 @@ describe 'Users', type: :request do
 
       context 'with correct parameters' do
         it 'succeeds' do
-          delete user_path(user), headers: headers
+          delete users_admin_path(user), headers: headers
 
           expect(response).to have_http_status(204)
         end
