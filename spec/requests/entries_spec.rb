@@ -85,11 +85,11 @@ describe 'Pools', type: :request do
   end
 
   describe 'POST /pools/1/entries' do
-    subject {
+    subject do
       post pool_entries_path(pool),
-      headers: headers,
-      params: params
-    }
+           headers: headers,
+           params: params
+    end
 
     context 'when making an HTML requeset' do
       context 'with correct parameters' do
@@ -260,7 +260,7 @@ describe 'Pools', type: :request do
         let(:params) { { entry: { teams: [0, 31, 2, 3, 4, 5] } } }
 
         it 'fails' do
-          expect{ subject }.to_not change { entry.attributes }
+          expect { subject }.to_not change { entry.attributes }
 
           expect(response).to have_http_status(422)
           expect(response.content_type).to eq('application/json')

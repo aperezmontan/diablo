@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_examples 'a resource owner endpoint' do
   let(:non_resource_owner) { create(:user) }
   let(:result) do

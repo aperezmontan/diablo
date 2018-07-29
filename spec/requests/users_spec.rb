@@ -214,7 +214,7 @@ describe 'Users', type: :request do
         let(:params) { { user: { foo: 'Foo' } } }
 
         it 'fails' do
-          expect{ subject }.to_not change{ random_user.attributes }
+          expect { subject }.to_not change { random_user.attributes }
         end
       end
 
