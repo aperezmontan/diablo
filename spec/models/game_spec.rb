@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: games
@@ -9,17 +8,19 @@
 #  away_team  :integer
 #  status     :integer
 #  winner     :integer
-#  pool_id    :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  loser      :integer
+#  week       :integer
+#  year       :integer
 #
 
 require 'rails_helper'
 
 describe Game do
   describe 'associations' do
-    it { is_expected.to belong_to(:pool) }
+    it { is_expected.to have_many(:game_pools) }
+    it { is_expected.to have_many(:pools).through(:game_pools) }
   end
 
   describe 'validations' do

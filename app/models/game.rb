@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: games
@@ -9,15 +8,17 @@
 #  away_team  :integer
 #  status     :integer
 #  winner     :integer
-#  pool_id    :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  loser      :integer
+#  week       :integer
+#  year       :integer
 #
 
 class Game < ApplicationRecord
   # ASSOCIATIONS
-  belongs_to :pool
+  has_many :game_pools
+  has_many :pools, through: :game_pools
 
   # VALIDATIONS
   validates_presence_of :home_team

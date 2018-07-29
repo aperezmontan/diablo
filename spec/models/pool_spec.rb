@@ -18,7 +18,8 @@ require 'rails_helper'
 describe Pool do
   describe 'assocations' do
     it { is_expected.to have_many(:entries) }
-    it { is_expected.to have_many(:games) }
+    it { is_expected.to have_many(:game_pools) }
+    it { is_expected.to have_many(:games).through(:game_pools) }
   end
 
   describe 'validations' do
