@@ -5,4 +5,6 @@ Rails.application.routes.draw do
     resources :entries
   end
   resources :users
+
+  root 'pools#index'
 end
