@@ -38,6 +38,8 @@ class Entry < ApplicationRecord
 
   enum status: %i[pending active winner loser]
 
+  attribute :status, :integer, default: -> { 0 }
+
   attr_reader :data
 
   def calculate!(game = nil)

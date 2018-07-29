@@ -5,9 +5,7 @@ class EntriesController < ApplicationController
   before_action :set_entry, only: %i[show edit update destroy]
 
   # GET pools/1/entries
-  def index
-    @entries = @pool.entries
-  end
+  def index; end
 
   # GET pools/1/entries/1
   def show; end
@@ -24,19 +22,27 @@ class EntriesController < ApplicationController
   def create
     @entry = @pool.entries.build(entry_params)
 
-    if @entry.save
-      redirect_to([@entry.pool, @entry], notice: 'Entry was successfully created.')
-    else
-      render action: 'new'
+    respond_to do |format|
+      if @entry.save
+        format.html { redirect_to @entry.pool, notice: 'Entry was successfully created.' }
+        format.json { render @entry, status: :created }
+      else
+        format.html { render :new }
+        format.json { render json: @entry.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   # PUT pools/1/entries/1
   def update
-    if @entry.update_attributes(entry_params)
-      redirect_to([@entry.pool, @entry], notice: 'Entry was successfully updated.')
-    else
-      render action: 'edit'
+    respond_to do |format|
+      if @entry.update_attributes(entry_params)
+        format.html { redirect_to @entry.pool, notice: 'Entry was successfully updated.' }
+        format.json { render @entry, status: :ok }
+      else
+        format.html { render :edit }
+        format.json { render json: @pool.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -44,7 +50,10 @@ class EntriesController < ApplicationController
   def destroy
     @entry.destroy
 
-    redirect_to pool_entries_url(@pool)
+    respond_to do |format|
+      format.html { redirect_to pool_entries_url(@pool), notice: 'Entry was successfully destroyed.' }
+      format.json { head :no_content }
+    end
   end
 
   private
