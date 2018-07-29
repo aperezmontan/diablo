@@ -3,6 +3,7 @@
 class EntriesController < ApplicationController
   before_action :set_entries
   before_action :set_entry, only: %i[show edit update destroy]
+  before_action :admin_or_resource_owner?, only: %i[edit update destroy]
 
   # GET pools/1/entries
   def index; end
@@ -58,7 +59,23 @@ class EntriesController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
+  def admin?
+    current_user&.admin?
+  end
+
+  def admin_or_resource_owner?
+    unauthorized_response unless admin? || resource_owner
+  end
+
+  def entry_params
+    params[:entry][:teams] ||= []
+    params.require(:entry).permit(:pool_id, :user_id, :name, :status, teams: [])
+  end
+
+  def resource_owner
+    @resource_owner ||= @entry.user == current_user
+  end
+
   def set_entries
     @pool = Pool.find(params[:pool_id])
   end
@@ -67,9 +84,7 @@ class EntriesController < ApplicationController
     @entry = @pool.entries.find(params[:id])
   end
 
-  # Only allow a trusted parameter "white list" through.
-  def entry_params
-    params[:entry][:teams] ||= []
-    params.require(:entry).permit(:pool_id, :user_id, :name, :status, teams: [])
+  def unauthorized_response
+    render json: {}, status: :unauthorized
   end
 end
