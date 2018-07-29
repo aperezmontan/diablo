@@ -2,30 +2,6 @@
 
 require 'rails_helper'
 
-shared_examples 'an admin user endpoint' do
-  let(:non_admin_user) { create(:user) }
-  let(:result) do
-    return subject unless subject.class == Fixnum # rubocop:disable Lint/UnifiedInteger
-    response
-  end
-
-  before(:each) { sign_out :user }
-
-  context 'when the user is not an admin user' do
-    it 'fails with Unauthorized' do
-      sign_in non_admin_user
-      expect(result).to have_http_status(401)
-    end
-  end
-
-  context 'when the user is an admin user' do
-    it 'succeeds' do
-      sign_in user
-      expect(result).to_not have_http_status(401)
-    end
-  end
-end
-
 describe 'Users', type: :request do
   include Devise::Test::IntegrationHelpers
 
@@ -238,12 +214,7 @@ describe 'Users', type: :request do
         let(:params) { { user: { foo: 'Foo' } } }
 
         it 'fails' do
-          username = random_user.username
-          subject
-
-          random_user.reload
-          expect(random_user.username).to_not eq('Foo')
-          expect(random_user.username).to eq(username)
+          expect{ subject }.to_not change{ random_user.attributes }
         end
       end
 
