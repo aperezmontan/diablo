@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :is_admin?
+  before_action :admin?
   before_action :build_user, only: [:create]
   before_action :set_user, only: %i[show edit update destroy]
 
@@ -63,7 +63,7 @@ class UsersController < ApplicationController
 
   private
 
-  def is_admin?
+  def admin?
     unauthorized_response unless current_user&.admin?
   end
 

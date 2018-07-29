@@ -5,7 +5,7 @@ require 'rails_helper'
 shared_examples 'an admin user endpoint' do
   let(:non_admin_user) { create(:user) }
   let(:result) do
-    return subject unless subject.class == Fixnum
+    return subject unless subject.class == Fixnum # rubocop:disable Lint/UnifiedInteger
     response
   end
 
@@ -29,7 +29,7 @@ end
 describe 'Users', type: :request do
   include Devise::Test::IntegrationHelpers
 
-  let(:user) { create(:user, role: "admin") }
+  let(:user) { create(:user, role: 'admin') }
   let(:random_user) { create(:user) }
   let(:headers) { nil }
 
@@ -127,7 +127,7 @@ describe 'Users', type: :request do
         it "creates the new User and redirects to that User's page" do
           expect { subject }.to change { User.count }.by(1)
 
-          user_id = User.find_by_username("Bruh").id
+          user_id = User.find_by_username('Bruh').id
           expect(response).to redirect_to(users_admin_path(user_id))
           expect(response.content_type).to eq('text/html')
           follow_redirect!
@@ -175,7 +175,7 @@ describe 'Users', type: :request do
         it 'succeeds' do
           expect { subject }.to change { User.count }.by(1)
 
-          user = User.find_by_username("Bruh")
+          user = User.find_by_username('Bruh')
           expect(response).to have_http_status(201)
           expect(response.content_type).to eq('application/json')
           expect(JSON.parse(response.body)).to include(JSON.parse(user.to_json))
