@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
+  before_action :is_admin?
   before_action :build_user, only: [:create]
   before_action :set_user, only: %i[show edit update destroy]
 
@@ -62,6 +63,10 @@ class UsersController < ApplicationController
 
   private
 
+  def is_admin?
+    unauthorized_response unless current_user&.admin?
+  end
+
   def build_user
     @user = User.new(user_params)
   end
@@ -80,5 +85,9 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :username).merge!(password: generated_password)
+  end
+
+  def unauthorized_response
+    render json: {}, status: :unauthorized
   end
 end
