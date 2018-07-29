@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Pool:</b>
+  <%= @entry.pool %>
+</p>
+
+<p>
+  <b>User:</b>
+  <%= @entry.user %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @entry.name %>
+</p>
+
+<p>
+  <b>Teams:</b>
+  <%= @entry.teams %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%= @entry.status %>
+</p>
+
+
+<%= link_to 'Edit', edit_pool_entry_path(@entry.pool, @entry) %> |
+<%= link_to 'Back', pool_entries_path(@entry.pool) %>

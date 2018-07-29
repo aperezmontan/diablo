@@ -6,5 +6,15 @@ FactoryBot.define do
     week { rand(1.17) }
     year { rand(0..9999) }
     description 'This is a Pool'
+
+    trait :with_games do
+      transient do
+        games_count 16
+      end
+
+      after(:create) do |pool, evaluator|
+        create_list(:game, evaluator.games_count, pool: pool)
+      end
+    end
   end
 end

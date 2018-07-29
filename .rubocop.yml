@@ -23,11 +23,6 @@ Style/FormatStringToken:
   Exclude:
     - spec/**/*
 
-Style/IpAddresses:
-  # The test for this cop includes strings that would cause offenses
-  Exclude:
-  - spec/rubocop/cop/style/ip_addresses_spec.rb
-
 Layout/EndOfLine:
   EnforcedStyle: lf
 
@@ -87,15 +82,12 @@ Performance/Caller:
   Exclude:
     - spec/rubocop/cop/performance/caller_spec.rb
 
-RSpec/PredicateMatcher:
-  EnforcedStyle: explicit
-
-RSpec/NestedGroups:
-  Max: 7
-
 Style/Documentation:
   Enabled: false
 
 Style/MixinUsage:
   Exclude:
     - 'bin/**/*'
+
+Style/MultilineIfModifier:
+  Enabled: false

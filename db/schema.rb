@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_28_142012) do
+ActiveRecord::Schema.define(version: 2018_07_28_180905) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "entries", force: :cascade do |t|
+    t.bigint "pool_id"
+    t.bigint "user_id"
+    t.string "name"
+    t.integer "teams", default: [], null: false, array: true
+    t.integer "status"
+    t.jsonb "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pool_id"], name: "index_entries_on_pool_id"
+    t.index ["user_id"], name: "index_entries_on_user_id"
+  end
 
   create_table "games", force: :cascade do |t|
     t.integer "home_team"
@@ -23,6 +36,7 @@ ActiveRecord::Schema.define(version: 2018_07_28_142012) do
     t.bigint "pool_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "loser"
     t.index ["pool_id"], name: "index_games_on_pool_id"
   end
 
@@ -41,4 +55,6 @@ ActiveRecord::Schema.define(version: 2018_07_28_142012) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "entries", "pools"
+  add_foreign_key "entries", "users"
 end
