@@ -15,6 +15,8 @@
 
 class Pool < ApplicationRecord
   has_many :entries
+  has_many :games
+
   validates_presence_of :week
   validates_presence_of :year
   validates_numericality_of :week
