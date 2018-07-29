@@ -2,78 +2,149 @@
 
 require 'rails_helper'
 
+shared_examples 'a resource owner endpoint' do
+  let(:non_resource_owner) { create(:user) }
+  let(:result) do
+    return subject unless subject.class == Fixnum # rubocop:disable Lint/UnifiedInteger
+    response
+  end
+
+  before(:each) { sign_out :user }
+
+  context 'when the user is not the resource owner' do
+    it 'fails with Unauthorized' do
+      sign_in non_resource_owner
+      expect(result).to have_http_status(401)
+    end
+  end
+
+  context 'when the user is the resource owner' do
+    it 'succeeds' do
+      sign_in resource_owner
+      expect(result).to_not have_http_status(401)
+    end
+  end
+end
+
+shared_examples 'an admin user endpoint' do
+  let(:non_admin_user) { create(:user) }
+  let(:result) do
+    return subject unless subject.class == Fixnum # rubocop:disable Lint/UnifiedInteger
+    response
+  end
+
+  before(:each) { sign_out :user }
+
+  context 'when the user is not an admin user' do
+    it 'fails with Unauthorized' do
+      sign_in non_admin_user
+      expect(result).to have_http_status(401)
+    end
+  end
+
+  context 'when the user is an admin user' do
+    it 'succeeds' do
+      sign_in user
+      expect(result).to_not have_http_status(401)
+    end
+  end
+end
+
 describe 'Pools', type: :request do
-  let(:user) { create(:user) }
+  include Devise::Test::IntegrationHelpers
+
+  let(:user) { create(:user, role: 'admin') }
+  let(:resource_owner) { create(:user) }
   let(:pool) { create(:pool, :with_games) }
-  let(:entry) { create(:entry, pool: pool) }
+  let(:entry) { create(:entry, pool: pool, user: resource_owner) }
+  let(:headers) { nil }
+
+  subject do
+    request
+    response
+  end
+
+  before(:each) { sign_in user }
 
   describe 'GET /pools/1/entries/new' do
+    let(:request) { get new_pool_entry_path(pool), headers: headers }
+
     it "displays the new Entry's page" do
-      get new_pool_entry_path(pool)
-      expect(response).to have_http_status(200)
-      expect(response.content_type).to eq('text/html')
-      expect(response.body).to include('New Entry')
+      expect(subject).to have_http_status(200)
+      expect(subject.content_type).to eq('text/html')
+      expect(subject.body).to include('New Entry')
     end
   end
 
   describe 'GET /pools/1/entries/1/edit' do
+    let(:request) { get edit_pool_entry_path(pool, entry) }
+
+    it_behaves_like 'an admin user endpoint'
+    it_behaves_like 'a resource owner endpoint'
+
     it "displays the edit Entry's page" do
-      get edit_pool_entry_path(pool, entry)
-      expect(response).to have_http_status(200)
-      expect(response.content_type).to eq('text/html')
-      expect(response.body).to include('Editing Entry')
+      expect(subject).to have_http_status(200)
+      expect(subject.content_type).to eq('text/html')
+      expect(subject.body).to include('Editing Entry')
     end
   end
 
   describe 'GET /pools/1/entries' do
-    context 'when requesting an HTML response' do
+    let(:request) { get pool_entries_path(pool), headers: headers }
+
+    context 'when making an HTML requeset' do
       it 'succeeds' do
-        get pool_entries_path(pool)
-        expect(response).to have_http_status(200)
-        expect(response.content_type).to eq('text/html')
-        expect(response.body).to include('Entries')
+        expect(subject).to have_http_status(200)
+        expect(subject.content_type).to eq('text/html')
+        expect(subject.body).to include('Entries')
       end
     end
 
-    context 'when requesting a JSON response' do
+    context 'when making a JSON request' do
       let(:headers) { { 'ACCEPT' => 'application/json' } } # This is what Rails accepts
 
       it 'succeeds' do
-        get pool_entries_path(pool), headers: headers
-        expect(response).to have_http_status(200)
-        expect(response.content_type).to eq('application/json')
+        expect(subject).to have_http_status(200)
+        expect(subject.content_type).to eq('application/json')
       end
     end
   end
 
   describe 'GET /pools/1/entries/1' do
-    context 'when requesting an HTML response' do
+    let(:request) { get pool_entry_path(pool, entry), headers: headers }
+
+    context 'when making an HTML requeset' do
       it 'succeeds' do
-        get pool_entry_path(pool, entry)
-        expect(response).to have_http_status(200)
-        expect(response.content_type).to eq('text/html')
-        expect(response.body).to include('This is an Entry')
+        expect(subject).to have_http_status(200)
+        expect(subject.content_type).to eq('text/html')
+        expect(subject.body).to include('This is an Entry')
       end
     end
 
-    context 'when requesting a JSON response' do
+    context 'when making a JSON request' do
       let(:headers) { { 'ACCEPT' => 'application/json' } } # This is what Rails accepts
 
       it 'succeeds' do
-        get pool_entry_path(pool, entry), headers: headers
-        expect(response).to have_http_status(200)
-        expect(response.content_type).to eq('application/json')
-        expect(response.body).to include('This is an Entry')
+        expect(subject).to have_http_status(200)
+        expect(subject.content_type).to eq('application/json')
+        expect(subject.body).to include('This is an Entry')
       end
     end
   end
 
   describe 'POST /pools/1/entries' do
-    context 'when requesting an HTML response' do
+    subject {
+      post pool_entries_path(pool),
+      headers: headers,
+      params: params
+    }
+
+    context 'when making an HTML requeset' do
       context 'with correct parameters' do
+        let(:params) { { entry: { name: 'Bruh', user_id: user.id } } }
+
         it "creates the new Entry and redirects to that Pool's page" do
-          expect { post pool_entries_path(pool), params: { entry: { name: 'Bruh', user_id: user.id } } }
-            .to change { Entry.count }.by(1)
+          expect { subject }.to change { Entry.count }.by(1)
 
           expect(response).to redirect_to(pool_path(pool))
           expect(response.content_type).to eq('text/html')
@@ -86,9 +157,10 @@ describe 'Pools', type: :request do
       end
 
       context 'with incorrect parameters' do
+        let(:params) { { entry: { foo: 'Bruh', user_id: user.id } } }
+
         it 'fails' do
-          expect { post pool_entries_path(pool), params: { entry: { foo: 'Bruh', user_id: user.id } } }
-            .to change { Entry.count }.by(0)
+          expect { subject }.to change { Entry.count }.by(0)
 
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq('text/html')
@@ -97,9 +169,10 @@ describe 'Pools', type: :request do
       end
 
       context 'with bad parameters' do
+        let(:params) { { entry: { name: 'Bruh' } } }
+
         it 'fails' do
-          expect { post pool_entries_path(pool), params: { entry: { name: 'Bruh' } } }
-            .to change { Entry.count }.by(0)
+          expect { subject }.to change { Entry.count }.by(0)
 
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq('text/html')
@@ -108,16 +181,14 @@ describe 'Pools', type: :request do
       end
     end
 
-    context 'when requesting a JSON response' do
+    context 'when making a JSON request' do
       let(:headers) { { 'ACCEPT' => 'application/json' } } # This is what Rails accepts
 
       context 'with correct parameters' do
+        let(:params) { { entry: { name: 'Bruh', user_id: user.id } } }
+
         it 'succeeds' do
-          expect do
-            post pool_entries_path(pool),
-                 headers: headers,
-                 params: { entry: { name: 'Bruh', user_id: user.id } }
-          end.to change { Entry.count }.by(1)
+          expect { subject }.to change { Entry.count }.by(1)
 
           expect(response).to have_http_status(201)
           expect(response.content_type).to eq('application/json')
@@ -126,12 +197,10 @@ describe 'Pools', type: :request do
       end
 
       context 'with incorrect parameters' do
+        let(:params) { { entry: { foo: 'Bruh', user_id: user.id } } }
+
         it 'fails' do
-          expect do
-            post pool_entries_path(pool),
-                 headers: headers,
-                 params: { entry: { foo: 'Bruh', user_id: user.id } }
-          end.to change { Entry.count }.by(0)
+          expect { subject }.to change { Entry.count }.by(0)
 
           expect(response).to have_http_status(422)
           expect(response.content_type).to eq('application/json')
@@ -139,9 +208,10 @@ describe 'Pools', type: :request do
       end
 
       context 'with bad parameters' do
+        let(:params) { { entry: { name: 'Bruh' } } }
+
         it 'fails' do
-          expect { post pool_entries_path(pool), headers: headers, params: { entry: { name: 'Bruh' } } }
-            .to change { Entry.count }.by(0)
+          expect { subject }.to change { Entry.count }.by(0)
 
           expect(response).to have_http_status(422)
           expect(response.content_type).to eq('application/json')
@@ -151,11 +221,19 @@ describe 'Pools', type: :request do
   end
 
   describe 'PUT /pools/1/entries/1' do
-    context 'when requesting an HTML response' do
+    subject { put pool_entry_path(pool, entry), headers: headers, params: params }
+
+    context 'when making an HTML requeset' do
       context 'with correct parameters' do
+        let(:params) { { entry: { name: 'Foo' } } }
+
+        it_behaves_like 'an admin user endpoint'
+        it_behaves_like 'a resource owner endpoint'
+
         it "updates the Entry and redirects to the Pool's page" do
           expect(entry.name).to eq('This is an Entry')
-          put pool_entry_path(pool, entry), params: { entry: { name: 'Foo' } }
+          subject
+
           entry.reload
           expect(entry.name).to eq('Foo')
 
@@ -170,16 +248,19 @@ describe 'Pools', type: :request do
       end
 
       context 'with incorrect parameters' do
+        let(:params) { { entry: { foo: 'Foo' } } }
+
         it 'fails' do
-          expect { put pool_entry_path(pool, entry), params: { entry: { foo: 'Foo' } } }
-            .to_not change { entry.attributes }
+          expect { subject }.to_not change { entry.attributes }
         end
       end
 
       context 'with bad parameters' do
+        let(:params) { { entry: { teams: [0, 31, 2, 3, 4, 5] } } }
+
         it 'fails' do
           expect(entry.status).to eq('pending')
-          put pool_entry_path(pool, entry), params: { entry: { teams: [0, 31, 2, 3, 4, 5] } }
+          subject
 
           entry.reload
           expect(entry.status).to eq('pending')
@@ -194,13 +275,18 @@ describe 'Pools', type: :request do
       end
     end
 
-    context 'when requesting a JSON response' do
+    context 'when making a JSON request' do
       let(:headers) { { 'ACCEPT' => 'application/json' } } # This is what Rails accepts
 
       context 'with correct parameters' do
+        let(:params) { { entry: { name: 'Foo' } } }
+
+        it_behaves_like 'an admin user endpoint'
+        it_behaves_like 'a resource owner endpoint'
+
         it 'succeeds' do
           expect(entry.name).to eq('This is an Entry')
-          put pool_entry_path(pool, entry), headers: headers, params: { entry: { name: 'Foo' } }
+          subject
 
           entry.reload
           expect(entry.name).to eq('Foo')
@@ -211,19 +297,18 @@ describe 'Pools', type: :request do
       end
 
       context 'with incorrect parameters' do
+        let(:params) { { entry: { foo: 'Foo' } } }
+
         it 'fails' do
-          expect { put pool_entry_path(pool, entry), headers: headers, params: { entry: { foo: 'Foo' } } }
-            .to_not change { entry.attributes }
+          expect { subject }.to_not change { entry.attributes }
         end
       end
 
       context 'with bad parameters' do
+        let(:params) { { entry: { teams: [0, 31, 2, 3, 4, 5] } } }
+
         it 'fails' do
-          expect do
-            put pool_entry_path(pool, entry),
-                headers: headers,
-                params: { entry: { teams: [0, 31, 2, 3, 4, 5] } }
-          end.to_not change { entry.attributes }
+          expect{ subject }.to_not change { entry.attributes }
 
           expect(response).to have_http_status(422)
           expect(response.content_type).to eq('application/json')
@@ -238,10 +323,17 @@ describe 'Pools', type: :request do
   end
 
   describe 'DELETE /pools/1/entries/1' do
-    context 'when requesting an HTML response' do
+    let!(:entry_to_delete) { create(:entry, pool: pool, user: resource_owner) }
+
+    subject { delete pool_entry_path(pool, entry_to_delete), headers: headers }
+
+    context 'when making an HTML requeset' do
+      it_behaves_like 'an admin user endpoint'
+      it_behaves_like 'a resource owner endpoint'
+
       context 'with correct parameters' do
         it 'deletes the Pool and redirects to the Pools page' do
-          delete pool_entry_path(pool, entry)
+          expect { subject }.to change { Entry.count }.by(-1)
 
           expect(response).to redirect_to(pool_entries_path(pool))
           expect(response.content_type).to eq('text/html')
@@ -254,13 +346,15 @@ describe 'Pools', type: :request do
       end
     end
 
-    context 'when requesting a JSON response' do
+    context 'when making a JSON request' do
       let(:headers) { { 'ACCEPT' => 'application/json' } } # This is what Rails accepts
+
+      it_behaves_like 'an admin user endpoint'
+      it_behaves_like 'a resource owner endpoint'
 
       context 'with correct parameters' do
         it 'succeeds' do
-          delete pool_entry_path(pool, entry), headers: headers
-
+          expect { subject }.to change { Entry.count }.by(-1)
           expect(response).to have_http_status(204)
         end
       end
