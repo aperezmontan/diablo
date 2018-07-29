@@ -16,6 +16,11 @@
 require 'rails_helper'
 
 describe Pool do
+  describe 'assocations' do
+    it { is_expected.to have_many(:entries) }
+    it { is_expected.to have_many(:games) }
+  end
+
   describe 'validations' do
     it { is_expected.to validate_presence_of(:week) }
     it { is_expected.to validate_presence_of(:year) }
