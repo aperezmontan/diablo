@@ -4,6 +4,8 @@ AllCops:
     - 'vendor/**/*'
     - 'spec/fixtures/**/*'
     - 'tmp/**/*'
+    - 'app/controllers/users/**/*' # Devise Generated Controllers
+    - 'config/initializers/devise.rb'
   TargetRubyVersion: 2.3.4
 
 Naming/PredicateName:

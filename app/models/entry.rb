@@ -8,7 +8,7 @@
 #  pool_id    :integer
 #  user_id    :integer
 #  name       :string
-#  teams      :integer          default([]), is an Array
+#  teams      :integer          default([]), not null, is an Array
 #  status     :integer
 #  data       :jsonb
 #  created_at :datetime         not null
