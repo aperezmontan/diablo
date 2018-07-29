@@ -176,17 +176,17 @@ describe 'Pools', type: :request do
         end
       end
 
-      xcontext 'with bad parameters' do
+      context 'with bad parameters' do
         it 'fails' do
           expect(entry.status).to eq('pending')
-          put pool_entry_path(pool, entry), params: { entry: { status: 77 } }
+          put pool_entry_path(pool, entry), params: { entry: { teams: [0,31,2,3,4,5] } }
 
           entry.reload
           expect(entry.status).to eq('pending')
 
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq('text/html')
-          expect(response.body).to include('Week is not a number')
+          expect(response.body).to include('Teams [[&quot;ari&quot;, &quot;was&quot;]] are playing each other')
         end
       end
     end
@@ -214,14 +214,14 @@ describe 'Pools', type: :request do
         end
       end
 
-      xcontext 'with bad parameters' do
+      context 'with bad parameters' do
         it 'fails' do
-          expect { put pool_entry_path(pool, entry), headers: headers, params: { entry: { status: 77 } } }
+          expect { put pool_entry_path(pool, entry), headers: headers, params: { entry: { teams: [0,31,2,3,4,5] } } }
             .to_not change { entry.attributes }
 
           expect(response).to have_http_status(422)
           expect(response.content_type).to eq('application/json')
-          expect(JSON.parse(response.body)).to eq('week' => ['is not a number'])
+          expect(JSON.parse(response.body)).to eq("teams" => ["[[\"ari\", \"was\"]] are playing each other"])
         end
       end
     end

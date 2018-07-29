@@ -41,7 +41,7 @@ class EntriesController < ApplicationController
         format.json { render @entry, status: :ok }
       else
         format.html { render :edit }
-        format.json { render json: @pool.errors, status: :unprocessable_entity }
+        format.json { render json: @entry.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -69,6 +69,7 @@ class EntriesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def entry_params
-    params.require(:entry).permit(:pool_id, :user_id, :name, :teams, :status)
+    params[:entry][:teams] ||= []
+    params.require(:entry).permit(:pool_id, :user_id, :name, :status, teams: [])
   end
 end
