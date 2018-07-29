@@ -15,6 +15,31 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+require 'factory_bot_rails'
+
+module FactoryBot
+  module Syntax
+    module Methods
+      alias original_create_list create_list
+
+      def create_list(name, amount, *traits_and_overrides, &block)
+        if name == :game
+          raise ArgumentError, "You asked to create #{amount} game records. Don't do that." if amount > 16
+
+          pool = traits_and_overrides.first.dig(:pool)
+
+          amount.times do |num|
+            create(:game, home_team: num, away_team: 31 - num, pool: pool)
+          end
+        else
+          original_create_list(name, amount, *traits_and_overrides, &block)
+        end
+      end
+    end
+  end
+end
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

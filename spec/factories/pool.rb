@@ -8,7 +8,7 @@ FactoryBot.define do
     description 'This is a Pool'
 
     trait :with_games do
-      ignore do
+      transient do
         games_count 16
       end
 

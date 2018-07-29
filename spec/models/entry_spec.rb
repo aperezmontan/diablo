@@ -23,12 +23,20 @@
 require 'rails_helper'
 
 describe Entry do
+  let(:pool) { create(:pool, :with_games, games_count: 15) }
+
   describe 'associations' do
     it { is_expected.to belong_to(:pool) }
     it { is_expected.to belong_to(:user) }
   end
 
+  describe 'delegates' do
+    it { is_expected.to delegate_method(:games).to(:pool) }
+  end
+
   describe 'validations' do
+    subject { build(:entry, pool: pool) }
+
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:status) }
 
@@ -50,17 +58,17 @@ describe Entry do
     context 'when entry is active' do
       context 'when teams has less than 6 entries' do
         it 'fails validations' do
-          expect { create(:entry, status: :active, teams: [0, 1, 2, 3, 4]) }
-            .to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Teams haven't picked enough")
+          expect { create(:entry, status: :active, teams: [0, 1, 2, 3, 4], pool: pool) }
+            .to raise_error(ActiveRecord::RecordInvalid, /Validation failed: Teams haven't picked enough/)
         end
       end
 
       context 'when trying to change teams' do
-        let(:entry) { create(:entry, status: :active, teams: [0, 1, 2, 3, 4, 5]) }
+        let(:entry) { create(:entry, status: :active, teams: [0, 1, 2, 3, 4, 5], pool: pool) }
 
         it 'fails validation' do
           expect { entry.update!(teams: [0, 1, 2, 3, 4, 6]) }
-            .to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Teams can't be changed, active Entry")
+            .to raise_error(ActiveRecord::RecordInvalid, /Validation failed: Teams can't be changed, active Entry/)
         end
       end
     end
@@ -68,21 +76,37 @@ describe Entry do
     context 'when teams has more than 6 entries' do
       it 'fails validations' do
         expect { create(:entry, teams: [0, 1, 2, 3, 4, 5, 6]) }
-          .to raise_error(ActiveRecord::RecordInvalid, 'Validation failed: Teams picked too many')
+          .to raise_error(ActiveRecord::RecordInvalid, /Validation failed: Teams picked too many/)
       end
     end
 
     context 'when teams has duplicate entries' do
       it 'fails validations' do
         expect { create(:entry, teams: [0, 0, 1, 2, 3, 4]) }
-          .to raise_error(ActiveRecord::RecordInvalid, 'Validation failed: Teams can only be picked once')
+          .to raise_error(ActiveRecord::RecordInvalid, /Validation failed: Teams can only be picked once/)
+      end
+    end
+
+    context "when a team doesn't have a game in the pool" do
+      it 'fails validations' do
+        expect { create(:entry, teams: [0, 1, 2, 3, 4, 16], pool: pool) }
+          .to raise_error(ActiveRecord::RecordInvalid,
+                          /Validation failed: Teams \["lac"\] have been picked but aren\'t playing/)
+      end
+    end
+
+    context 'when a chosen team is playing another chosen team' do
+      it 'fails validations' do
+        expect { create(:entry, teams: [0, 1, 2, 3, 4, 31], pool: pool) }
+          .to raise_error(ActiveRecord::RecordInvalid,
+                          /Validation failed: Teams \[\["ari", "was"\]\] are playing each other/)
       end
     end
   end
 
   describe '#calculate' do
     context 'when a new entry is made' do
-      let(:entry) { create(:entry, teams: [0, 1, 2, 3, 4, 5]) }
+      let(:entry) { create(:entry, teams: [0, 1, 2, 3, 4, 5], pool: pool) }
       let(:data) do
         {
           0 => 'pending',
@@ -146,7 +170,7 @@ describe Entry do
 
   describe '#data' do
     context 'when trying to write to it' do
-      let(:entry) { create(:entry) }
+      let(:entry) { create(:entry, teams: [0, 1, 2, 3, 4, 5], pool: pool) }
 
       it 'raises an error' do
         expect { entry.data = 'foo' }.to raise_error(NoMethodError)
