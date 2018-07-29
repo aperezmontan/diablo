@@ -179,7 +179,7 @@ describe 'Pools', type: :request do
       context 'with bad parameters' do
         it 'fails' do
           expect(entry.status).to eq('pending')
-          put pool_entry_path(pool, entry), params: { entry: { teams: [0,31,2,3,4,5] } }
+          put pool_entry_path(pool, entry), params: { entry: { teams: [0, 31, 2, 3, 4, 5] } }
 
           entry.reload
           expect(entry.status).to eq('pending')
@@ -216,12 +216,15 @@ describe 'Pools', type: :request do
 
       context 'with bad parameters' do
         it 'fails' do
-          expect { put pool_entry_path(pool, entry), headers: headers, params: { entry: { teams: [0,31,2,3,4,5] } } }
-            .to_not change { entry.attributes }
+          expect do
+            put pool_entry_path(pool, entry),
+                headers: headers,
+                params: { entry: { teams: [0, 31, 2, 3, 4, 5] } }
+          end.to_not change { entry.attributes }
 
           expect(response).to have_http_status(422)
           expect(response.content_type).to eq('application/json')
-          expect(JSON.parse(response.body)).to eq("teams" => ["[[\"ari\", \"was\"]] are playing each other"])
+          expect(JSON.parse(response.body)).to eq('teams' => ['[["ari", "was"]] are playing each other'])
         end
       end
     end
