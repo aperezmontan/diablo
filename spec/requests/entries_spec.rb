@@ -113,8 +113,11 @@ describe 'Pools', type: :request do
 
       context 'with correct parameters' do
         it 'succeeds' do
-          expect { post pool_entries_path(pool), headers: headers, params: { entry: { name: 'Bruh', user_id: user.id } } }
-            .to change { Entry.count }.by(1)
+          expect do
+            post pool_entries_path(pool),
+                 headers: headers,
+                 params: { entry: { name: 'Bruh', user_id: user.id } }
+          end.to change { Entry.count }.by(1)
 
           expect(response).to have_http_status(201)
           expect(response.content_type).to eq('application/json')
@@ -124,8 +127,11 @@ describe 'Pools', type: :request do
 
       context 'with incorrect parameters' do
         it 'fails' do
-          expect { post pool_entries_path(pool), headers: headers, params: { entry: { foo: 'Bruh', user_id: user.id } } }
-            .to change { Entry.count }.by(0)
+          expect do
+            post pool_entries_path(pool),
+                 headers: headers,
+                 params: { entry: { foo: 'Bruh', user_id: user.id } }
+          end.to change { Entry.count }.by(0)
 
           expect(response).to have_http_status(422)
           expect(response.content_type).to eq('application/json')
@@ -172,11 +178,11 @@ describe 'Pools', type: :request do
 
       xcontext 'with bad parameters' do
         it 'fails' do
-          expect(entry.status).to eq("pending")
+          expect(entry.status).to eq('pending')
           put pool_entry_path(pool, entry), params: { entry: { status: 77 } }
 
           entry.reload
-          expect(entry.status).to eq("pending")
+          expect(entry.status).to eq('pending')
 
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq('text/html')
