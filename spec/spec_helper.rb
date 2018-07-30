@@ -27,11 +27,13 @@ module FactoryBot
         if name == :game
           raise ArgumentError, "You asked to create #{amount} game records. Don't do that." if amount > 16
 
-          pool = traits_and_overrides.first.dig(:pool)
+          games = []
 
           amount.times do |num|
-            create(:game, home_team: num, away_team: 31 - num, pool: pool)
+            games.push(create(:game, home_team: num, away_team: 31 - num))
           end
+
+          games
         else
           original_create_list(name, amount, *traits_and_overrides, &block)
         end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_29_142012) do
+ActiveRecord::Schema.define(version: 2018_07_29_233600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,16 +28,27 @@ ActiveRecord::Schema.define(version: 2018_07_29_142012) do
     t.index ["user_id"], name: "index_entries_on_user_id"
   end
 
+  create_table "game_pools", force: :cascade do |t|
+    t.bigint "game_id"
+    t.bigint "pool_id"
+    t.integer "week"
+    t.integer "year"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_game_pools_on_game_id"
+    t.index ["pool_id"], name: "index_game_pools_on_pool_id"
+  end
+
   create_table "games", force: :cascade do |t|
     t.integer "home_team"
     t.integer "away_team"
     t.integer "status"
     t.integer "winner"
-    t.bigint "pool_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "loser"
-    t.index ["pool_id"], name: "index_games_on_pool_id"
+    t.integer "week"
+    t.integer "year"
   end
 
   create_table "pools", force: :cascade do |t|
@@ -70,4 +81,6 @@ ActiveRecord::Schema.define(version: 2018_07_29_142012) do
 
   add_foreign_key "entries", "pools"
   add_foreign_key "entries", "users"
+  add_foreign_key "game_pools", "games"
+  add_foreign_key "game_pools", "pools"
 end

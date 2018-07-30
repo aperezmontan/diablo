@@ -9,20 +9,24 @@
 #  away_team  :integer
 #  status     :integer
 #  winner     :integer
-#  pool_id    :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  loser      :integer
+#  week       :integer
+#  year       :integer
 #
 
 class Game < ApplicationRecord
   # ASSOCIATIONS
-  belongs_to :pool
+  has_many :game_pools
+  has_many :pools, through: :game_pools
 
   # VALIDATIONS
   validates_presence_of :home_team
   validates_presence_of :away_team
   validates_presence_of :status
+  validates_presence_of :week
+  validates_presence_of :year
 
   validates_numericality_of :home_team
   validates_numericality_of :away_team
@@ -32,11 +36,13 @@ class Game < ApplicationRecord
 
   validate :home_and_away_teams
 
-  enum home_team: TEAMS.keys, _prefix: true
-  enum away_team: TEAMS.keys, _prefix: true
+  enum home_team: TEAMS.values, _prefix: true
+  enum away_team: TEAMS.values, _prefix: true
+  enum winner: TEAMS.values.push(:no_winner), _prefix: true
+  enum loser: TEAMS.values, _prefix: true
   enum status: %i[pending finished]
-  enum winner: TEAMS.keys.push(:no_winner), _prefix: true
-  enum loser: TEAMS.keys, _prefix: true
+
+  attribute :status, :integer, default: -> { 0 }
 
   private
 

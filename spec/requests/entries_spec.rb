@@ -186,7 +186,10 @@ describe 'Pools', type: :request do
 
           expect(response).to have_http_status(200)
           expect(response.content_type).to eq('text/html')
-          expect(response.body).to include('Teams [[&quot;ari&quot;, &quot;was&quot;]] are playing each other')
+          expect(response.body)
+            .to include(
+              'Teams [[&quot;Arizona Cardinals&quot;, &quot;Washington Redskins&quot;]] are playing each other'
+            )
         end
       end
     end
@@ -224,7 +227,11 @@ describe 'Pools', type: :request do
 
           expect(response).to have_http_status(422)
           expect(response.content_type).to eq('application/json')
-          expect(JSON.parse(response.body)).to eq('teams' => ['[["ari", "was"]] are playing each other'])
+          expect(JSON.parse(response.body)).to eq(
+            'teams' => [
+              '[["Arizona Cardinals", "Washington Redskins"]] are playing each other'
+            ]
+          )
         end
       end
     end

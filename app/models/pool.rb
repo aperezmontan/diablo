@@ -14,9 +14,12 @@
 #
 
 class Pool < ApplicationRecord
+  # ASSOCIATIONS
   has_many :entries
-  has_many :games
+  has_many :game_pools
+  has_many :games, through: :game_pools
 
+  # VALIDATIONS
   validates_presence_of :week
   validates_presence_of :year
   validates_numericality_of :week

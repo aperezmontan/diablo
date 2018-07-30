@@ -9,23 +9,27 @@
 #  away_team  :integer
 #  status     :integer
 #  winner     :integer
-#  pool_id    :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  loser      :integer
+#  week       :integer
+#  year       :integer
 #
 
 require 'rails_helper'
 
 describe Game do
   describe 'associations' do
-    it { is_expected.to belong_to(:pool) }
+    it { is_expected.to have_many(:game_pools) }
+    it { is_expected.to have_many(:pools).through(:game_pools) }
   end
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:home_team) }
     it { is_expected.to validate_presence_of(:away_team) }
     it { is_expected.to validate_presence_of(:status) }
+    it { is_expected.to validate_presence_of(:week) }
+    it { is_expected.to validate_presence_of(:year) }
 
     context 'status enum values' do
       subject { described_class }
@@ -45,38 +49,38 @@ describe Game do
 
       let(:teams) do
         {
-          'ari' => 0,
-          'atl' => 1,
-          'bal' => 2,
-          'buf' => 3,
-          'car' => 4,
-          'chi' => 5,
-          'cin' => 6,
-          'cle' => 7,
-          'dal' => 8,
-          'den' => 9,
-          'det' => 10,
-          'gb' => 11,
-          'hou' => 12,
-          'ind' => 13,
-          'jax' => 14,
-          'kc' => 15,
-          'lac' => 16,
-          'lar' => 17,
-          'mia' => 18,
-          'min' => 19,
-          'ne' => 20,
-          'no' => 21,
-          'nyg' => 22,
-          'nyj' => 23,
-          'oak' => 24,
-          'phi' => 25,
-          'pit' => 26,
-          'sea' => 27,
-          'sf' => 28,
-          'tb' => 29,
-          'ten' => 30,
-          'was' => 31
+          'Arizona Cardinals' => 0,
+          'Atlanta Falcons' => 1,
+          'Baltimore Ravens' => 2,
+          'Buffalo Bills' => 3,
+          'Carolina Panthers' => 4,
+          'Chicago Bears' => 5,
+          'Cincinnati Bengals' => 6,
+          'Cleveland Browns' => 7,
+          'Dallas Cowboys' => 8,
+          'Denver Broncos' => 9,
+          'Detroit Lions' => 10,
+          'Green Bay Packers' => 11,
+          'Houston Texans' => 12,
+          'Indianapolis Colts' => 13,
+          'Jacksonville Jaguars' => 14,
+          'Kansas City Chiefs' => 15,
+          'Los Angeles Chargers' => 16,
+          'Los Angeles Rams' => 17,
+          'Miami Dolphins' => 18,
+          'Minnesota Vikings' => 19,
+          'New England Patriots' => 20,
+          'New Orleans Saints' => 21,
+          'New York Giants' => 22,
+          'New York Jets' => 23,
+          'Oakland Raiders' => 24,
+          'Philadelphia Eagles' => 25,
+          'Pittsburgh Steelers' => 26,
+          'Seattle Seahawks' => 27,
+          'San Francisco 49ers' => 28,
+          'Tampa Bay Buccaneers' => 29,
+          'Tennessee Titans' => 30,
+          'Washington Redskins' => 31
         }
       end
 
@@ -88,7 +92,7 @@ describe Game do
 
     context 'when home and away teams are the same' do
       it 'fails validations' do
-        expect { create(:game, home_team: 0, away_team: 0) }
+        expect { create(:game, home_team: 0, away_team: 0, week: 0, year: 0) }
           .to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Away team can't be the same as Home team")
       end
     end
