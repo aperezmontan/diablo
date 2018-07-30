@@ -9,10 +9,17 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
+  <% if current_user.admin? %>
+    <div class="admin u-full-width">
+      <h2 class="admin-header">ADMIN<h2>
+    </div>
+  <% end %>
+
   <body>
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
 
     <%= yield %>
+
   </body>
 </html>
