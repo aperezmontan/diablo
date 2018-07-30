@@ -56,7 +56,7 @@ class Entry < ApplicationRecord
     teams_not_playing = teams - matchups.flatten
     return unless teams_not_playing.present?
 
-    teams_not_playing = teams_not_playing.map{ |team| TEAMS[team] }
+    teams_not_playing = teams_not_playing.map { |team| TEAMS[team] }
     errors.add(:teams, "#{teams_not_playing} have been picked but aren't playing") if teams_not_playing.present?
   end
 
@@ -97,7 +97,9 @@ class Entry < ApplicationRecord
   end
 
   def matchups
-    @matchups ||= games.pluck(:home_team, :away_team).map{ |(home_team, away_team)| [Game.home_teams[home_team], Game.away_teams[away_team]] }
+    @matchups ||= games
+                  .pluck(:home_team, :away_team)
+                  .map { |(home_team, away_team)| [Game.home_teams[home_team], Game.away_teams[away_team]] }
   end
 
   def teams_ok

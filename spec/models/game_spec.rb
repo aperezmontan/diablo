@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: games
@@ -46,38 +47,38 @@ describe Game do
 
       let(:teams) do
         {
-"Arizona Cardinals"=>0,
- "Atlanta Falcons"=>1,
- "Baltimore Ravens"=>2,
- "Buffalo Bills"=>3,
- "Carolina Panthers"=>4,
- "Chicago Bears"=>5,
- "Cincinnati Bengals"=>6,
- "Cleveland Browns"=>7,
- "Dallas Cowboys"=>8,
- "Denver Broncos"=>9,
- "Detroit Lions"=>10,
- "Green Bay Packers"=>11,
- "Houston Texans"=>12,
- "Indianapolis Colts"=>13,
- "Jacksonville Jaguars"=>14,
- "Kansas City Chiefs"=>15,
- "Los Angeles Chargers"=>16,
- "Los Angeles Rams"=>17,
- "Miami Dolphins"=>18,
- "Minnesota Vikings"=>19,
- "New England Patriots"=>20,
- "New Orleans Saints"=>21,
- "New York Giants"=>22,
- "New York Jets"=>23,
- "Oakland Raiders"=>24,
- "Philadelphia Eagles"=>25,
- "Pittsburgh Steelers"=>26,
- "Seattle Seahawks"=>27,
- "San Francisco 49ers"=>28,
- "Tampa Bay Buccaneers"=>29,
- "Tennessee Titans"=>30,
- "Washington Redskins"=>31
+          'Arizona Cardinals' => 0,
+          'Atlanta Falcons' => 1,
+          'Baltimore Ravens' => 2,
+          'Buffalo Bills' => 3,
+          'Carolina Panthers' => 4,
+          'Chicago Bears' => 5,
+          'Cincinnati Bengals' => 6,
+          'Cleveland Browns' => 7,
+          'Dallas Cowboys' => 8,
+          'Denver Broncos' => 9,
+          'Detroit Lions' => 10,
+          'Green Bay Packers' => 11,
+          'Houston Texans' => 12,
+          'Indianapolis Colts' => 13,
+          'Jacksonville Jaguars' => 14,
+          'Kansas City Chiefs' => 15,
+          'Los Angeles Chargers' => 16,
+          'Los Angeles Rams' => 17,
+          'Miami Dolphins' => 18,
+          'Minnesota Vikings' => 19,
+          'New England Patriots' => 20,
+          'New Orleans Saints' => 21,
+          'New York Giants' => 22,
+          'New York Jets' => 23,
+          'Oakland Raiders' => 24,
+          'Philadelphia Eagles' => 25,
+          'Pittsburgh Steelers' => 26,
+          'Seattle Seahawks' => 27,
+          'San Francisco 49ers' => 28,
+          'Tampa Bay Buccaneers' => 29,
+          'Tennessee Titans' => 30,
+          'Washington Redskins' => 31
         }
       end
 

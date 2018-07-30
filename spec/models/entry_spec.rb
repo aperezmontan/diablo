@@ -98,8 +98,10 @@ describe Entry do
     context 'when a chosen team is playing another chosen team' do
       it 'fails validations' do
         expect { create(:entry, teams: [0, 1, 2, 3, 4, 31], pool: pool) }
-          .to raise_error(ActiveRecord::RecordInvalid,
-                          /Validation failed: Teams \[\["Arizona Cardinals", "Washington Redskins"\]\] are playing each other/)
+          .to raise_error(
+            ActiveRecord::RecordInvalid,
+            /Validation failed: Teams \[\["Arizona Cardinals", "Washington Redskins"\]\] are playing each other/
+          )
       end
     end
   end
