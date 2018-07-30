@@ -22,6 +22,13 @@ class Pool < ApplicationRecord
   # VALIDATIONS
   validates_presence_of :week
   validates_presence_of :year
+  validates_presence_of :status
+
   validates_numericality_of :week
   validates_numericality_of :year
+  validates_numericality_of :status
+
+  enum status: %i[pending active finished]
+
+  attribute :status, :integer, default: -> { 0 }
 end
