@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class GamesController < ApplicationController
   before_action :admin?
-  before_action :set_game, only: [:show, :edit, :update, :destroy]
-  before_action :convert_teams, only: [:create, :update]
+  before_action :set_game, only: %i[show edit update destroy]
+  before_action :convert_teams, only: %i[create update]
 
   # GET /games
   # GET /games.json
@@ -11,8 +13,7 @@ class GamesController < ApplicationController
 
   # GET /games/1
   # GET /games/1.json
-  def show
-  end
+  def show; end
 
   # GET /games/new
   def new
@@ -20,8 +21,7 @@ class GamesController < ApplicationController
   end
 
   # GET /games/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /games
   # POST /games.json
@@ -69,11 +69,12 @@ class GamesController < ApplicationController
     unauthorized_response unless current_user&.admin?
   end
 
+  def convert_team(attr:)
+    params[:game][attr] = Game.winners[params[:game][attr]] if params[:game][attr]
+  end
+
   def convert_teams
-    params[:game][:away_team] = Game.away_teams[params[:game][:away_team]] if params[:game][:away_team]
-    params[:game][:home_team] = Game.home_teams[params[:game][:home_team]] if params[:game][:home_team]
-    params[:game][:loser] = Game.losers[params[:game][:loser]] if params[:game][:loser]
-    params[:game][:winner] = Game.winners[params[:game][:winner]] if params[:game][:winner]
+    %i[home_team away_team winner loser].each { |attr| convert_team(attr: attr) if params[:game][attr] }
   end
 
   def game_params
