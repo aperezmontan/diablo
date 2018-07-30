@@ -33,11 +33,11 @@ class Game < ApplicationRecord
 
   validate :home_and_away_teams
 
-  enum home_team: TEAMS.keys, _prefix: true
-  enum away_team: TEAMS.keys, _prefix: true
+  enum home_team: TEAMS.values, _prefix: true
+  enum away_team: TEAMS.values, _prefix: true
   enum status: %i[pending finished]
-  enum winner: TEAMS.keys.push(:no_winner), _prefix: true
-  enum loser: TEAMS.keys, _prefix: true
+  enum winner: TEAMS.values.push(:no_winner), _prefix: true
+  enum loser: TEAMS.values, _prefix: true
 
   private
 

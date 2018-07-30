@@ -91,7 +91,7 @@ describe Entry do
       it 'fails validations' do
         expect { create(:entry, teams: [0, 1, 2, 3, 4, 16], pool: pool) }
           .to raise_error(ActiveRecord::RecordInvalid,
-                          /Validation failed: Teams \["lac"\] have been picked but aren\'t playing/)
+                          /Validation failed: Teams \["Los Angeles Chargers"\] have been picked but aren\'t playing/)
       end
     end
 
@@ -99,7 +99,7 @@ describe Entry do
       it 'fails validations' do
         expect { create(:entry, teams: [0, 1, 2, 3, 4, 31], pool: pool) }
           .to raise_error(ActiveRecord::RecordInvalid,
-                          /Validation failed: Teams \[\["ari", "was"\]\] are playing each other/)
+                          /Validation failed: Teams \[\["Arizona Cardinals", "Washington Redskins"\]\] are playing each other/)
       end
     end
   end
