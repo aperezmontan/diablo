@@ -28,6 +28,8 @@ describe Game do
     it { is_expected.to validate_presence_of(:home_team) }
     it { is_expected.to validate_presence_of(:away_team) }
     it { is_expected.to validate_presence_of(:status) }
+    it { is_expected.to validate_presence_of(:week) }
+    it { is_expected.to validate_presence_of(:year) }
 
     context 'status enum values' do
       subject { described_class }
@@ -90,7 +92,7 @@ describe Game do
 
     context 'when home and away teams are the same' do
       it 'fails validations' do
-        expect { create(:game, home_team: 0, away_team: 0) }
+        expect { create(:game, home_team: 0, away_team: 0, week: 0, year: 0) }
           .to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Away team can't be the same as Home team")
       end
     end

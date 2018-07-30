@@ -6,6 +6,8 @@ FactoryBot.define do
     home_team 0
     away_team 1
     status 0
+    week 0
+    year 0
 
     trait :with_pool do
       transient do
