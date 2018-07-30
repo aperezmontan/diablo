@@ -11,27 +11,19 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :week %>
-    <%= form.number_field :week %>
+  <div class="row">
+    <div class="six columns">
+      <%= form.label :week %>
+      <%= form.select :week, options_for_select(1..17), {}, {required: 'true', autofocus: 'false', class: "u-full-width"} %>
+    </div>
+    <div class="six columns">
+      <%= form.label :year %>
+      <%= form.select :year, options_for_select(2018..2019), {}, {required: 'true', autofocus: 'false', class: "u-full-width"} %>
+    </div>
   </div>
 
-  <div class="field">
-    <%= form.label :year %>
-    <%= form.number_field :year %>
-  </div>
+  <%= form.label :description %>
+  <%= form.text_area :description, class: "u-full-width" %>
 
-  <div class="field">
-    <%= form.label :description %>
-    <%= form.text_area :description %>
-  </div>
-
-  <div class="field">
-    <%= form.label :status %>
-    <%= form.number_field :status %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+  <%= form.submit 'CREATE POOL', class: "button-primary" %>
 <% end %>

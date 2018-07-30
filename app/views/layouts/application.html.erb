@@ -9,7 +9,7 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <% if current_user.admin? %>
+  <% if current_user&.admin? %>
     <div class="admin u-full-width">
       <h2 class="admin-header">ADMIN<h2>
     </div>
@@ -19,7 +19,22 @@
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
 
+  <% if user_signed_in? %>
+    <%= link_to 'Sign Out', destroy_user_session_path %>
+  <% else %>
+    <%= link_to 'Sign Up', new_user_registration_path %>
+    <%= link_to 'Sign In', new_user_session_path %>
+  <% end %>
+
     <%= yield %>
 
+<% unless current_page?('/') || current_page?('/pools') %>
+  <%= link_to 'Pools', pools_path %>
+<% end %>
+
+<% if current_user&.admin? %>
+  <%= (link_to 'Games', games_path) unless current_page?('/games') %>
+  <%= (link_to 'Users', users_admin_index_path) unless current_page?('/users_admin') %>
+<% end %>
   </body>
 </html>

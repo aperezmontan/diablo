@@ -1,4 +1,4 @@
-<%= form_with(model: game, local: true) do |f| %>
+<%= form_with(model: game, local: true) do |form| %>
   <% if game.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(game.errors.count, "error") %> prohibited this game from being saved:</h2>
@@ -11,35 +11,27 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :week %><br />
-    <%= f.text_field :week %>
+  <div class="row">
+    <div class="six columns">
+      <%= form.label :week %>
+      <%= form.select :week, options_for_select(1..17), {}, {required: 'true', autofocus: 'true', class: "u-full-width"} %>
+    </div>
+    <div class="six columns">
+      <%= form.label :year %>
+      <%= form.select :year, options_for_select(2018..2019), {}, {required: 'true', autofocus: 'false', class: "u-full-width"} %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :year %><br />
-    <%= f.text_field :year %>
+
+  <div class="row">
+    <div class="six columns">
+      <%= form.label :home_team %>
+      <%= form.select :home_team, options_for_select(TEAMS.values), {}, {required: 'true', autofocus: 'false', class: "u-full-width"} %>
+    </div>
+    <div class="six columns">
+      <%= form.label :away_team %>
+      <%= form.select :away_team, options_for_select(TEAMS.values), {}, {required: 'true', autofocus: 'false', class: "u-full-width"} %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :home_team %><br />
-    <%= f.text_field :home_team %>
-  </div>
-  <div class="field">
-    <%= f.label :away_team %><br />
-    <%= f.text_field :away_team %>
-  </div>
-  <div class="field">
-    <%= f.label :status %><br />
-    <%= f.text_field :status %>
-  </div>
-  <div class="field">
-    <%= f.label :winner %><br />
-    <%= f.text_field :winner %>
-  </div>
-  <div class="field">
-    <%= f.label :loser %><br />
-    <%= f.number_field :loser %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+
+  <%= form.submit 'CREATE GAME', class: "button-primary" %>
 <% end %>

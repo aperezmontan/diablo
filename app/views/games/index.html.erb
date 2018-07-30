@@ -1,24 +1,34 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Games</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @games.each do |game| %>
+<% if @games.empty? %>
+  <h6>No Pools yet</h6>
+<% else %>
+  <table class="u-full-width">
+    <thead>
       <tr>
-        <td><%= link_to 'Show', game %></td>
-        <td><%= link_to 'Edit', edit_game_path(game) %></td>
-        <td><%= link_to 'Destroy', game, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>Home Team</th>
+        <th>Away Team</th>
+        <th>Week</th>
+        <th>Year</th>
+        <th colspan="3"></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% @games.each do |game| %>
+        <tr>
+          <td><%= game.home_team %></td>
+          <td><%= game.away_team %></td>
+          <td><%= game.week %></td>
+          <td><%= game.year %></td>
+          <td><%= link_to 'Show', game %></td>
+          <td><%= link_to 'Edit', edit_game_path(game) %></td>
+          <td><%= link_to 'Destroy', game, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
 
 <br>
 

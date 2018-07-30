@@ -1,31 +1,37 @@
-<h1>Pools</h1>
+<h3>Pools</h3>
 
-<table>
-  <thead>
-    <tr>
-      <th>Week</th>
-      <th>Year</th>
-      <th>Description</th>
-      <th>Status</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @pools.each do |pool| %>
+<% if @pools.empty? %>
+  <h6>No Pools yet</h6>
+<% else %>
+  <table class="u-full-width">
+    <thead>
       <tr>
-        <td><%= pool.week %></td>
-        <td><%= pool.year %></td>
-        <td><%= pool.description %></td>
-        <td><%= pool.status %></td>
-        <td><%= link_to 'Show', pool %></td>
-        <td><%= link_to 'Edit', edit_pool_path(pool) %></td>
-        <td><%= link_to 'Destroy', pool, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <th>Week</th>
+        <th>Year</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th colspan="3"></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+
+    <tbody>
+      <% @pools.each do |pool| %>
+        <tr>
+          <td><%= pool.week %></td>
+          <td><%= pool.year %></td>
+          <td><%= pool.description %></td>
+          <td><%= pool.status %></td>
+          <td ><%= link_to 'Show', pool %></td>
+          <td><%= link_to 'Edit', edit_pool_path(pool) %></td>
+          <td><%= link_to 'Destroy', pool, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
 
 <br>
 
-<%= link_to 'New Pool', new_pool_path %>
+<% if current_user&.admin? %>
+  <%= link_to 'New Pool', new_pool_path %>
+<% end %>
