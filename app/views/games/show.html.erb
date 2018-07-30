@@ -1,0 +1,37 @@
+<p>
+  <b>Home Team:</b>
+  <%= @game.home_team %>
+</p>
+
+<p>
+  <b>Away Team:</b>
+  <%= @game.away_team %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%= @game.status %>
+</p>
+
+<p>
+  <b>Winner:</b>
+  <%= @game.winner %>
+</p>
+
+<p>
+  <b>Loser:</b>
+  <%= @game.loser %>
+</p>
+
+<p>
+  <b>Week:</b>
+  <%= @game.week %>
+</p>
+
+<p>
+  <b>Year:</b>
+  <%= @game.year %>
+</p>
+
+<%= link_to 'Edit', edit_game_path(@game) %> |
+<%= link_to 'Back', games_path %>

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :games
   devise_for :users do
     get '/users/sign_out' => 'devise/sessions#destroy'
   end

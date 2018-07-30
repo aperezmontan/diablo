@@ -25,6 +25,8 @@ class Game < ApplicationRecord
   validates_presence_of :home_team
   validates_presence_of :away_team
   validates_presence_of :status
+  validates_presence_of :week
+  validates_presence_of :year
 
   validates_numericality_of :home_team
   validates_numericality_of :away_team
@@ -36,9 +38,11 @@ class Game < ApplicationRecord
 
   enum home_team: TEAMS.values, _prefix: true
   enum away_team: TEAMS.values, _prefix: true
-  enum status: %i[pending finished]
   enum winner: TEAMS.values.push(:no_winner), _prefix: true
   enum loser: TEAMS.values, _prefix: true
+  enum status: %i[pending finished]
+
+  attribute :status, :integer, default: -> { 0 }
 
   private
 
