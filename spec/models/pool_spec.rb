@@ -24,8 +24,26 @@ describe Pool do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:week) }
-    it { is_expected.to validate_presence_of(:year) }
     it { is_expected.to validate_numericality_of(:week) }
+
+    it { is_expected.to validate_presence_of(:year) }
     it { is_expected.to validate_numericality_of(:year) }
+
+    it { is_expected.to validate_presence_of(:status) }
+    xit { is_expected.to validate_numericality_of(:status) }
+
+    context 'status enum values' do
+      subject { described_class }
+
+      let(:statuses) do
+        {
+          'pending' => 0,
+          'active' => 1,
+          'finished' => 2
+        }
+      end
+
+      its(:statuses) { is_expected.to eq statuses }
+    end
   end
 end
