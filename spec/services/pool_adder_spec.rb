@@ -24,7 +24,7 @@ describe PoolAdder do
         let(:game) { nil }
 
         it 'returns an PoolAdder error' do
-          expect{ subject }.to raise_error(PoolAdderError)
+          expect{ subject }.to raise_error(PoolAdderError, 'Expecting Game, received nil')
         end
       end
 
@@ -32,7 +32,7 @@ describe PoolAdder do
         let(:game) { create(:pool) }
 
         it 'returns an PoolAdder error' do
-          expect{ subject }.to raise_error(PoolAdderError)
+          expect{ subject }.to raise_error(PoolAdderError, 'Expecting Game, received Pool')
         end
       end
     end

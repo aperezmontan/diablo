@@ -11,8 +11,7 @@ class PoolAdderError < StandardError
   private
 
   def default_message
-    return nil
-    klass = input.nil? ? nil : input.class
+    klass = input.nil? ? 'nil' : input.class
     "Expecting Game, received #{klass}"
   end
 end
