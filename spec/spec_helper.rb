@@ -28,9 +28,10 @@ module FactoryBot
           raise ArgumentError, "You asked to create #{amount} game records. Don't do that." if amount > 16
 
           games = []
+          options = traits_and_overrides.extract_options!
 
           amount.times do |num|
-            games.push(create(:game, home_team: num, away_team: 31 - num))
+            games.push(create(:game, options.merge(home_team: num, away_team: 31 - num)))
           end
 
           games
