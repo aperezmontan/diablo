@@ -37,7 +37,8 @@ describe Game do
       let(:statuses) do
         {
           'pending' => 0,
-          'finished' => 1
+          'active' => 1,
+          'finished' => 2
         }
       end
 
@@ -94,6 +95,42 @@ describe Game do
       it 'fails validations' do
         expect { create(:game, home_team: 0, away_team: 0, week: 0, year: 0) }
           .to raise_error(ActiveRecord::RecordInvalid, "Validation failed: Away team can't be the same as Home team")
+      end
+    end
+
+    context 'when game is active' do
+      let(:game) do
+        created_game = create(:game, week: 0, year: 0, home_team: 0, away_team: 31)
+        created_game.update(status: 1)
+        created_game
+      end
+
+      context 'when trying to change week' do
+        it 'fails validation' do
+          expect { game.update!(week: 1) }
+            .to raise_error(ActiveRecord::RecordInvalid, /Validation failed: Week can't be changed, active Game/)
+        end
+      end
+
+      context 'when trying to change year' do
+        it 'fails validation' do
+          expect { game.update!(year: 1) }
+            .to raise_error(ActiveRecord::RecordInvalid, /Validation failed: Year can't be changed, active Game/)
+        end
+      end
+
+      context 'when trying to change home_team' do
+        it 'fails validation' do
+          expect { game.update!(home_team: 1) }
+            .to raise_error(ActiveRecord::RecordInvalid, /Validation failed: Home team can't be changed, active Game/)
+        end
+      end
+
+      context 'when trying to change away_team' do
+        it 'fails validation' do
+          expect { game.update!(away_team: 1) }
+            .to raise_error(ActiveRecord::RecordInvalid, /Validation failed: Away team can't be changed, active Game/)
+        end
       end
     end
   end
