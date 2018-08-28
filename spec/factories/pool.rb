@@ -13,7 +13,7 @@ FactoryBot.define do
       end
 
       after(:create) do |pool, evaluator|
-        pool.games << create_list(:game, evaluator.games_count)
+        pool.games << create_list(:game, evaluator.games_count, week: pool.week, year: pool.year)
       end
     end
   end
